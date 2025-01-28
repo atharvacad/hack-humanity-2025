@@ -71,9 +71,9 @@ app.post('/add-community-partners', (req, res) => {
   });
 });
 
-app.post('/add-food-donation', (req, res) => {
+app.post('/add-food', (req, res) => {
   const { donor_id, food_name, food_type, description, quantity, unit, packaging_type, storage_instructions, expiry_date, prepared_date, available_from, available_to, pickup_location, brand, dietary_restrictions, special_notes } = req.body;
-  const sql = `INSERT INTO food_donations (donor_id, food_name, food_type, description, quantity, unit, packaging_type, storage_instructions, expiry_date, prepared_date, available_from, available_to, pickup_location, brand, dietary_restrictions, special_notes)
+  const sql = `INSERT INTO foods (donor_id, food_name, food_type, description, quantity, unit, packaging_type, storage_instructions, expiry_date, prepared_date, available_from, available_to, pickup_location, brand, dietary_restrictions, special_notes)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
   const params = [donor_id, food_name, food_type, description, quantity, unit, packaging_type, storage_instructions, expiry_date, prepared_date, available_from, available_to, pickup_location, brand, dietary_restrictions, special_notes];
 
@@ -90,8 +90,8 @@ app.post('/add-food-donation', (req, res) => {
   });
 });
 
-app.get('/get-donation-list', (req, res) => {
-  db.all('SELECT * FROM food_donations', [], (err, rows) => {
+app.get('/get-food-list', (req, res) => {
+  db.all('SELECT * FROM foods', [], (err, rows) => {
     if (err) {
       res.status(400).json({ error: err.message });
       return;
@@ -133,6 +133,79 @@ app.post('/login', (req, res) => {
     });
   });
 });
+
+app.post('/food-requests', (req, res) => {
+  const { foods_id, community_partner_id, quantity_requested } = req.body;
+
+  // Check if the requested quantity is available
+  db.get('SELECT quantity, available_to FROM foods WHERE foods_id = ?', [foods_id], (err, row) => {
+    if (err) {
+      return res.status(400).json({ error: err.message });
+    }
+    if (!row || row.quantity < quantity_requested) {
+      return res.status(400).json({ message: 'Requested quantity not available' });
+    }
+
+    // Insert the food request
+    const sql = `INSERT INTO food_requests (foods_id, community_partner_id, quantity_requested, pickupdate)
+                 VALUES (?, ?, ?, ?)`;
+    const params = [foods_id, community_partner_id, quantity_requested, row.available_to];
+
+    db.run(sql, params, function(err) {
+      if (err) {
+        return res.status(400).json({ error: err.message });
+      }
+
+      // Update the available quantity in the foods table
+      const newQuantity = row.quantity - quantity_requested;
+      db.run('UPDATE foods SET quantity = ? WHERE foods_id = ?', [newQuantity, foods_id], function(err) {
+        if (err) {
+          return res.status(400).json({ error: err.message });
+        }
+        res.json({
+          message: 'success',
+          data: req.body,
+          id: this.lastID
+        });
+      });
+    });
+  });
+});
+
+app.get('/get-food-requests/:community_partner_id', (req, res) => {
+  const { community_partner_id } = req.params;
+  const sql = `SELECT * FROM food_requests WHERE community_partner_id = ?`;
+  db.all(sql, [community_partner_id], (err, rows) => {
+    if (err) {
+      return res.status(400).json({ error: err.message });
+    }
+    res.json({
+      message: 'success',
+      data: rows
+    });
+  });
+});
+
+app.get('/get-donor-requests/:donor_id', (req, res) => {
+  const { donor_id } = req.params;
+  const sql = `
+    SELECT fr.*, cp.name AS community_partner_name
+    FROM food_requests fr
+    JOIN foods f ON fr.foods_id = f.foods_id
+    JOIN community_partner cp ON fr.community_partner_id = cp.community_partner_id
+    WHERE f.donor_id = ?
+  `;
+  db.all(sql, [donor_id], (err, rows) => {
+    if (err) {
+      return res.status(400).json({ error: err.message });
+    }
+    res.json({
+      message: 'success',
+      data: rows
+    });
+  });
+});
+
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
