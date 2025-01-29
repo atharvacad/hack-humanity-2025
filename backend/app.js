@@ -172,9 +172,15 @@ app.post('/food-requests', (req, res) => {
   });
 });
 
+// Get all food requests for a community partner - Community Partner
 app.get('/get-food-requests/:community_partner_id', (req, res) => {
   const { community_partner_id } = req.params;
-  const sql = `SELECT * FROM food_requests WHERE community_partner_id = ?`;
+  const sql = `
+    SELECT fr.*, f.food_name, f.quantity AS total_quantity, (f.quantity - fr.quantity_requested) AS available_quantity
+    FROM food_requests fr
+    JOIN foods f ON fr.foods_id = f.foods_id
+    WHERE fr.community_partner_id = ?
+  `;
   db.all(sql, [community_partner_id], (err, rows) => {
     if (err) {
       return res.status(400).json({ error: err.message });
@@ -186,10 +192,12 @@ app.get('/get-food-requests/:community_partner_id', (req, res) => {
   });
 });
 
+
+// Get all food requests for a donation - this is for the donors
 app.get('/get-donor-requests/:donor_id', (req, res) => {
   const { donor_id } = req.params;
   const sql = `
-    SELECT fr.*, cp.name AS community_partner_name
+    SELECT fr.*, cp.name AS community_partner_name, f.food_name, f.quantity AS total_quantity
     FROM food_requests fr
     JOIN foods f ON fr.foods_id = f.foods_id
     JOIN community_partner cp ON fr.community_partner_id = cp.community_partner_id

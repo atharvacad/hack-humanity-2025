@@ -158,4 +158,17 @@ curl -X POST http://localhost:3000/login -H "Content-Type: application/json" -d 
   "password": "1234",
   "type": "donor"
 }'
+
+
+curl -X POST http://localhost:3000/food-requests -H "Content-Type: application/json" -d '{
+  "foods_id": 1,
+  "community_partner_id": 1,
+  "quantity_requested": 5.0
+}'
+
+curl -X GET http://localhost:3000/get-donor-requests/1
+
+curl -X GET http://localhost:3000/get-food-requests/1
+
+
 ```

@@ -1,4 +1,5 @@
 const sqlite3 = require('sqlite3').verbose();
+const fs = require('fs');
 
 let db = new sqlite3.Database('./sample.db');
 
@@ -56,27 +57,43 @@ db.serialize(() => {
     FOREIGN KEY(foods_id) REFERENCES foods(foods_id),
     FOREIGN KEY(community_partner_id) REFERENCES community_partner(community_partner_id)
   )`);
+const sql = fs.readFileSync('insert.sql', 'utf8');
+db.exec(sql, (err) => {
+        if (err) {
+                console.error('Error executing SQL file:', err.message);
+        } else {
+                console.log('SQL file executed successfully');
+        }
+});
 
+const sql2 = fs.readFileSync('insert2.sql', 'utf8');
+db.exec(sql2, (err) => {
+        if (err) {
+                console.error('Error executing SQL file:', err.message);
+        } else {
+                console.log('SQL file executed successfully');
+        }
+});
   // Insert sample records into donors
-  db.run(`INSERT INTO donors (name, contact_name, contact_email, contact_phone, address, city, zip_code)
-          VALUES ('Donor 1', 'Contact 1', 'contact1@example.com', '1234567890', 'Address 1', 'City 1', '12345')`);
+//   db.run(`INSERT INTO donors (name, contact_name, contact_email, contact_phone, address, city, zip_code)
+//           VALUES ('Donor 1', 'Contact 1', 'contact1@example.com', '1234567890', 'Address 1', 'City 1', '12345')`);
 
-  db.run(`INSERT INTO donors (name, contact_name, contact_email, contact_phone, address, city, zip_code)
-          VALUES ('Donor 2', 'Contact 2', 'contact2@example.com', '0987654321', 'Address 2', 'City 2', '54321')`);
+//   db.run(`INSERT INTO donors (name, contact_name, contact_email, contact_phone, address, city, zip_code)
+//           VALUES ('Donor 2', 'Contact 2', 'contact2@example.com', '0987654321', 'Address 2', 'City 2', '54321')`);
 
-  // Insert sample records into community_partner
-  db.run(`INSERT INTO community_partner (name, contact_name, contact_email, contact_phone, address, city, zip_code)
-          VALUES ('Partner 1', 'Contact 1', 'partner1@example.com', '1234567890', 'Address 1', 'City 1', '12345')`);
+//   // Insert sample records into community_partner
+//   db.run(`INSERT INTO community_partner (name, contact_name, contact_email, contact_phone, address, city, zip_code)
+//           VALUES ('Partner 1', 'Contact 1', 'partner1@example.com', '1234567890', 'Address 1', 'City 1', '12345')`);
 
-  db.run(`INSERT INTO community_partner (name, contact_name, contact_email, contact_phone, address, city, zip_code)
-          VALUES ('Partner 2', 'Contact 2', 'partner2@example.com', '0987654321', 'Address 2', 'City 2', '54321')`);
+//   db.run(`INSERT INTO community_partner (name, contact_name, contact_email, contact_phone, address, city, zip_code)
+//           VALUES ('Partner 2', 'Contact 2', 'partner2@example.com', '0987654321', 'Address 2', 'City 2', '54321')`);
 
-  // Insert sample records into foods
-  db.run(`INSERT INTO foods (donor_id, food_name, food_type, description, quantity, unit, packaging_type, storage_instructions, expiry_date, prepared_date, available_from, available_to, pickup_location, brand, dietary_restrictions, special_notes)
-          VALUES (1, 'Apples', 'Fruit', 'Fresh apples', 10.0, 'kg', 'Sealed box', 'Keep refrigerated', '2023-12-31', NULL, '2023-10-01 08:00:00', '2023-10-01 18:00:00', 'Location 1', 'Brand A', 'None', 'None')`);
+//   // Insert sample records into foods
+//   db.run(`INSERT INTO foods (donor_id, food_name, food_type, description, quantity, unit, packaging_type, storage_instructions, expiry_date, prepared_date, available_from, available_to, pickup_location, brand, dietary_restrictions, special_notes)
+//           VALUES (1, 'Apples', 'Fruit', 'Fresh apples', 10.0, 'kg', 'Sealed box', 'Keep refrigerated', '2023-12-31', NULL, '2023-10-01 08:00:00', '2023-10-01 18:00:00', 'Location 1', 'Brand A', 'None', 'None')`);
 
-  db.run(`INSERT INTO foods (donor_id, food_name, food_type, description, quantity, unit, packaging_type, storage_instructions, expiry_date, prepared_date, available_from, available_to, pickup_location, brand, dietary_restrictions, special_notes)
-          VALUES (2, 'Bread', 'Bakery', 'Whole grain bread', 5.0, 'pieces', 'Tupperware', 'Keep in a cool place', '2023-10-15', '2023-10-01 06:00:00', '2023-10-01 08:00:00', '2023-10-01 20:00:00', 'Location 2', 'Brand B', 'Vegan', 'Contains nuts')`);
+//   db.run(`INSERT INTO foods (donor_id, food_name, food_type, description, quantity, unit, packaging_type, storage_instructions, expiry_date, prepared_date, available_from, available_to, pickup_location, brand, dietary_restrictions, special_notes)
+//           VALUES (2, 'Bread', 'Bakery', 'Whole grain bread', 5.0, 'pieces', 'Tupperware', 'Keep in a cool place', '2023-10-15', '2023-10-01 06:00:00', '2023-10-01 08:00:00', '2023-10-01 20:00:00', 'Location 2', 'Brand B', 'Vegan', 'Contains nuts')`);
 });
 
 db.close();
