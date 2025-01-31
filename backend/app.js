@@ -1,8 +1,10 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
+const cors = require('cors'); // Import the cors package
 const app = express();
 const port = 3000;
 
+app.use(cors()); // Enable CORS for all routes
 app.use(express.json());
 
 let db = new sqlite3.Database('./sample.db');
@@ -106,10 +108,6 @@ app.get('/get-food-list', (req, res) => {
 app.post('/login', (req, res) => {
   const { email, password, type } = req.body;
 
-  if (password !== '1234') {
-    return res.status(401).json({ message: 'Invalid password' });
-  }
-
   let table = '';
   if (type === 'donor') {
     table = 'donors';
@@ -119,8 +117,8 @@ app.post('/login', (req, res) => {
     return res.status(400).json({ message: 'Invalid type' });
   }
 
-  const sql = `SELECT * FROM ${table} WHERE contact_email = ?`;
-  db.get(sql, [email], (err, row) => {
+  const sql = `SELECT * FROM ${table} WHERE contact_email = ? AND password = ?`;
+  db.get(sql, [email, password], (err, row) => {
     if (err) {
       return res.status(400).json({ error: err.message });
     }
@@ -133,6 +131,8 @@ app.post('/login', (req, res) => {
     });
   });
 });
+
+
 
 app.post('/food-requests', (req, res) => {
   const { foods_id, community_partner_id, quantity_requested } = req.body;
@@ -205,7 +205,6 @@ app.get('/get-donor-requests/:donor_id', (req, res) => {
     });
   });
 });
-
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
