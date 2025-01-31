@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import './FoodListDonar.css'; // Import the custom CSS
 
 const api = axios.create({
   baseURL: 'http://localhost:3001/api/donors'
@@ -55,7 +56,8 @@ const FoodListDonar = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4">Food List for Donor</h2>
+      <h2 className="mb-4">Your Food Donations</h2>
+      <p className="lead">Here you can see all the food items you have donated. Click on "Show Details" to view more information about each item.</p>
       {error && <p className="text-danger">{error}</p>}
       <table className="table table-striped table-bordered">
         <thead className="thead-dark">
@@ -76,7 +78,9 @@ const FoodListDonar = () => {
                 <td>{food.food_name}</td>
                 <td>{food.food_type}</td>
                 <td>{food.description}</td>
-                <td>{food.quantity}</td>
+                <td>
+                  <span className="badge badge-primary">{food.quantity}</span>
+                </td>
                 <td>{food.unit}</td>
                 <td>{food.packaging_type}</td>
                 <td>
@@ -91,7 +95,7 @@ const FoodListDonar = () => {
               {expandedRows[food.foods_id] && (
                 <tr>
                   <td colSpan="7">
-                    <div>
+                    <div className="details">
                       <p><strong>Storage Instructions:</strong> {food.storage_instructions}</p>
                       <p><strong>Expiry Date:</strong> {food.expiry_date}</p>
                       <p><strong>Prepared Date:</strong> {food.prepared_date}</p>
@@ -109,6 +113,7 @@ const FoodListDonar = () => {
           ))}
         </tbody>
       </table>
+      <p className="mt-4">Thank you for your generous donations! Your contributions make a significant impact in the community.</p>
     </div>
   );
 };

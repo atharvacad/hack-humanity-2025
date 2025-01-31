@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
+import './CommunityPartnerList.css'; // Import the custom CSS
 
 const api = axios.create({
   baseURL: 'http://localhost:3001/api'
@@ -46,6 +47,7 @@ const CommunityPartnerList = () => {
   return (
     <div className="container mt-5">
       <h2 className="mb-4">Community Partners List</h2>
+      <p className="lead">Here you can see all the community partners. </p>
       {error && <p className="text-danger">{error}</p>}
       <table className="table table-striped table-bordered">
         <thead className="thead-dark">
@@ -73,6 +75,7 @@ const CommunityPartnerList = () => {
           ))}
         </tbody>
       </table>
+      <p className="mt-4">Thank you for your interest in our community partners! Your support helps us make a significant impact.</p>
     </div>
   );
 };

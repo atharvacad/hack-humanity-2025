@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import './AddFoodDonation.css'; // Import the custom CSS
 
 const api = axios.create({
   baseURL: 'http://localhost:3001/api/foods'
@@ -72,6 +73,7 @@ const AddFoodDonation = () => {
   return (
     <div className="container mt-5">
       <h2 className="mb-4">Add Food Donation</h2>
+      <p className="lead">Please fill out the form below to add a new food donation. Your contributions make a significant impact in our community.</p>
       {error && <p className="text-danger">{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">

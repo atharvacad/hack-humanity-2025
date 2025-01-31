@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import './FoodRequestCommunityPartner.css'; // Import the custom CSS
 
 const api = axios.create({
   baseURL: 'http://localhost:3001/api'
@@ -50,6 +51,7 @@ const FoodRequestCommunityPartner = () => {
   return (
     <div className="container mt-5">
       <h2 className="mb-4">Food Requests for Community Partner</h2>
+      <p className="lead">Here you can see all the food requests made by your community. Click on "Show Donor Info" to view more information about each donor.</p>
       {error && <p className="text-danger">{error}</p>}
       <table className="table table-striped table-bordered">
         <thead className="thead-dark">
@@ -68,9 +70,11 @@ const FoodRequestCommunityPartner = () => {
             <React.Fragment key={request.food_request_id}>
               <tr>
                 <td>{request.food_name}</td>
-                <td>{request.quantity_requested}</td>
-                <td>{request.pickupdate}</td>
-                <td>{request.request_date}</td>
+                <td>
+                  <span className="badge badge-primary">{request.quantity_requested}</span>
+                </td>
+                <td>{new Date(request.pickupdate).toLocaleDateString()}</td>
+                <td>{new Date(request.request_date).toLocaleDateString()}</td>
                 <td>{request.total_quantity}</td>
                 <td>{request.available_quantity}</td>
                 <td>
@@ -85,7 +89,7 @@ const FoodRequestCommunityPartner = () => {
               {expandedRows[request.food_request_id] && (
                 <tr>
                   <td colSpan="7">
-                    <div>
+                    <div className="details">
                       <p><strong>Donor Name:</strong> {request.donor_name}</p>
                       <p><strong>Donor Email:</strong> {request.donor_email}</p>
                       <p><strong>Donor Phone:</strong> {request.donor_phone}</p>

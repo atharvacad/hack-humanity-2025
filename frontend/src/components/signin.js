@@ -1,4 +1,4 @@
-// src/signin.js
+// src/components/SignIn.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -66,7 +66,7 @@ const SignIn = ({ onUserUpdate }) => {
         />
       </div>
       <div className="form-group">
-        <label>Type:</label>
+        <label>User Type:</label>
         <select
           className="form-control"
           value={type}

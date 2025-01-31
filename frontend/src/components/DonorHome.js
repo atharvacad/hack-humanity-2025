@@ -1,8 +1,9 @@
-// src/DonorHome.js
+// src/components/DonorHome.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import './DonorHome.css'; // Import the custom CSS
 
 const DonorHome = () => {
   const [donorData, setDonorData] = useState(null);
@@ -53,14 +54,18 @@ const DonorHome = () => {
   }
 
   return (
-    <div className="container mt-5">
-      <h2>Welcome, {donorData.name}!</h2>
-      <p><strong>Contact Name:</strong> {donorData.contact_name}</p>
-      <p><strong>Contact Email:</strong> {donorData.contact_email}</p>
-      <p><strong>Contact Phone:</strong> {donorData.contact_phone}</p>
-      <p><strong>Address:</strong> {donorData.address}</p>
-      <p><strong>City:</strong> {donorData.city}</p>
-      <p><strong>Zip Code:</strong> {donorData.zip_code}</p>
+    <div className="container mt-5 donor-home">
+      <h2 className="mb-4">Welcome, {donorData.name}!</h2>
+      <p className="lead">Thank you for being a valued donor. Your contributions make a significant impact in our community.</p>
+      <div className="donor-info">
+        <p><strong>Contact Name:</strong> {donorData.contact_name}</p>
+        <p><strong>Contact Email:</strong> {donorData.contact_email}</p>
+        <p><strong>Contact Phone:</strong> {donorData.contact_phone}</p>
+        <p><strong>Address:</strong> {donorData.address}</p>
+        <p><strong>City:</strong> {donorData.city}</p>
+        <p><strong>Zip Code:</strong> {donorData.zip_code}</p>
+      </div>
+      <p className="mt-4">We appreciate your generosity and support. Together, we can make a difference!</p>
     </div>
   );
 };

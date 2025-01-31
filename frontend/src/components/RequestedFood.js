@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import './RequestedFood.css'; // Import the custom CSS
 
 const api = axios.create({
   baseURL: 'http://localhost:3001/api'
@@ -41,7 +42,8 @@ const RequestedFood = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4">Requested Food</h2>
+      <h2 className="mb-4">Your Requested Food Donations</h2>
+      <p className="lead">Here you can see all the food donation requests made by community partners for your donations.</p>
       {error && <p className="text-danger">{error}</p>}
       <table className="table table-striped table-bordered">
         <thead className="thead-dark">
@@ -58,15 +60,18 @@ const RequestedFood = () => {
           {foodRequests.map((request) => (
             <tr key={request.food_request_id}>
               <td>{request.food_name}</td>
-              <td>{request.quantity_requested}</td>
-              <td>{request.pickupdate}</td>
-              <td>{request.request_date}</td>
+              <td>
+                <span className="badge badge-primary">{request.quantity_requested}</span>
+              </td>
+              <td>{new Date(request.pickupdate).toLocaleDateString()}</td>
+              <td>{new Date(request.request_date).toLocaleDateString()}</td>
               <td>{request.total_quantity}</td>
               <td>{request.community_partner_name}</td>
             </tr>
           ))}
         </tbody>
       </table>
+      <p className="mt-4">Thank you for your generous donations! Your contributions make a significant impact in the community.</p>
     </div>
   );
 };

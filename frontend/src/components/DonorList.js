@@ -1,6 +1,7 @@
 // src/components/DonorList.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './DonorList.css'; // Import the custom CSS
 
 const api = axios.create({
   baseURL: 'http://localhost:3001/api'
@@ -26,7 +27,8 @@ const DonorList = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4">Donor List</h2>
+      <h2 className="mb-4">Our Valued Donors</h2>
+      <p className="lead">Here you can see all the donors who have contributed to our cause. Click on "Show Details" to view more information about each donor.</p>
       {error && <p className="text-danger">{error}</p>}
       <table className="table table-striped table-bordered">
         <thead className="thead-dark">
@@ -54,6 +56,7 @@ const DonorList = () => {
           ))}
         </tbody>
       </table>
+      <p className="mt-4">Thank you to all our donors! Your generosity and support make a significant impact in our community.</p>
     </div>
   );
 };

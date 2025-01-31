@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import './App.css';
+import Home from './Home'; // Import the Home component
 import FoodListDonar from './FoodListDonar';
 import ViewFoodList from './ViewFoodList';
 import DonorList from './DonorList';
@@ -37,7 +38,7 @@ const App = () => {
     <Router>
       <div className="App">
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
-          <Link className="navbar-brand" to="/">React App</Link>
+          <Link className="navbar-brand" to="/">AgniSewa App</Link>
           <div className="collapse navbar-collapse">
             <ul className="navbar-nav mr-auto">
               {userType === 'donor' && (
@@ -95,6 +96,7 @@ const App = () => {
         </nav>
         <div className="container mt-4">
           <Routes>
+            <Route path="/" element={<Home />} /> {/* Add the Home route */}
             <Route path="/donor-home" element={<DonorHome />} />
             <Route path="/community-partner-home" element={<CommunityPartnerHome />} />
             <Route path="/foodlistdonar" element={<FoodListDonar />} />
