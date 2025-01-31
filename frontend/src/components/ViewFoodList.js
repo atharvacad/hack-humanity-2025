@@ -1,6 +1,8 @@
 // src/components/ViewFoodList.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 const api = axios.create({
   baseURL: 'http://localhost:3001/api'
@@ -9,8 +11,9 @@ const api = axios.create({
 const ViewFoodList = () => {
   const [foodList, setFoodList] = useState([]);
   const [error, setError] = useState('');
+  const [quantityRequested, setQuantityRequested] = useState({});
   const [expandedRows, setExpandedRows] = useState({});
-  const [sortConfig, setSortConfig] = useState({ key: '', direction: '' });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFoodList = async () => {
@@ -33,23 +36,43 @@ const ViewFoodList = () => {
     }));
   };
 
-  const handleSort = (key) => {
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
-    }
-    setSortConfig({ key, direction });
+  const handleQuantityChange = (foods_id, value) => {
+    setQuantityRequested((prev) => ({
+      ...prev,
+      [foods_id]: value
+    }));
   };
 
-  const sortedFoodList = [...foodList].sort((a, b) => {
-    if (a[sortConfig.key] < b[sortConfig.key]) {
-      return sortConfig.direction === 'asc' ? -1 : 1;
+  const handleRequestFood = async (foods_id) => {
+    const userCookie = Cookies.get('user');
+    if (!userCookie) {
+      setError('User data not found in cookies');
+      return;
     }
-    if (a[sortConfig.key] > b[sortConfig.key]) {
-      return sortConfig.direction === 'asc' ? 1 : -1;
+
+    const userData = JSON.parse(userCookie);
+    const { id, type } = userData;
+
+    if (type !== 'community-partner') {
+      setError('User is not a community partner');
+      return;
     }
-    return 0;
-  });
+
+    try {
+      const response = await api.post('/food-requests/food-requests', {
+        foods_id,
+        community_partner_id: id,
+        quantity_requested: quantityRequested[foods_id] || 1
+      });
+      if (response.data.message === 'success') {
+        navigate(`/food-requests/${id}`);
+      } else {
+        setError('Failed to request food');
+      }
+    } catch (err) {
+      setError(err.response ? err.response.data.error : 'Error requesting food');
+    }
+  };
 
   return (
     <div className="container mt-5">
@@ -58,17 +81,17 @@ const ViewFoodList = () => {
       <table className="table table-striped table-bordered">
         <thead className="thead-dark">
           <tr>
-            <th onClick={() => handleSort('food_name')}>Food Name</th>
-            <th onClick={() => handleSort('food_type')}>Type</th>
-            <th onClick={() => handleSort('description')}>Description</th>
-            <th onClick={() => handleSort('quantity')}>Quantity</th>
-            <th onClick={() => handleSort('unit')}>Unit</th>
-            <th onClick={() => handleSort('packaging_type')}>Packaging Type</th>
-            <th>Extra Details</th>
+            <th>Food Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Unit</th>
+            <th>Packaging Type</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {sortedFoodList.map((food) => (
+          {foodList.map((food) => (
             <React.Fragment key={food.foods_id}>
               <tr>
                 <td>{food.food_name}</td>
@@ -79,10 +102,23 @@ const ViewFoodList = () => {
                 <td>{food.packaging_type}</td>
                 <td>
                   <button
-                    className="btn btn-info"
+                    className="btn btn-info mb-2"
                     onClick={() => toggleRow(food.foods_id)}
                   >
                     {expandedRows[food.foods_id] ? 'Hide Details' : 'Show Details'}
+                  </button>
+                  <input
+                    type="number"
+                    value={quantityRequested[food.foods_id] || 1}
+                    onChange={(e) => handleQuantityChange(food.foods_id, e.target.value)}
+                    min="1"
+                    className="form-control mb-2"
+                  />
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => handleRequestFood(food.foods_id)}
+                  >
+                    Request Food
                   </button>
                 </td>
               </tr>

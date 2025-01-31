@@ -52,9 +52,11 @@ router.get('/get-food-requests/:community_partner_id', (req, res) => {
   const { community_partner_id } = req.params;
   console.log(`Received request to get food requests for community partner with ID: ${community_partner_id}`);
   const sql = `
-    SELECT fr.*, f.food_name, f.quantity AS total_quantity, (f.quantity - fr.quantity_requested) AS available_quantity
+    SELECT fr.*, f.food_name, f.quantity AS total_quantity, (f.quantity - fr.quantity_requested) AS available_quantity,
+           d.name AS donor_name, d.contact_email AS donor_email, d.contact_phone AS donor_phone, d.address AS donor_address
     FROM food_requests fr
     JOIN foods f ON fr.foods_id = f.foods_id
+    JOIN donors d ON f.donor_id = d.donor_id
     WHERE fr.community_partner_id = ?
   `;
   db.all(sql, [community_partner_id], (err, rows) => {

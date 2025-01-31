@@ -1,5 +1,5 @@
 // src/App.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import './App.css';
 import FoodListDonar from './FoodListDonar';
@@ -11,11 +11,24 @@ import DonorHome from './DonorHome';
 import CommunityPartnerHome from './CommunityPartnerHome';
 import SignIn from './signin';
 import SignUp from './signup';
+import SignOut from './SignOut';
+import NotFound from './NotFound';
 import Cookies from 'js-cookie';
 
 const App = () => {
-  const userCookie = Cookies.get('user');
-  const userData = userCookie ? JSON.parse(userCookie) : null;
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const userCookie = Cookies.get('user');
+    if (userCookie) {
+      setUserData(JSON.parse(userCookie));
+    }
+  }, []);
+
+  const handleUserUpdate = (user) => {
+    setUserData(user);
+  };
+
   const userType = userData ? userData.type : null;
 
   return (
@@ -61,6 +74,11 @@ const App = () => {
                   </li>
                 </>
               )}
+              {userType && (
+                <li className="nav-item">
+                  <Link className="nav-link" to="/signout">Sign Out</Link>
+                </li>
+              )}
             </ul>
           </div>
         </nav>
@@ -74,8 +92,9 @@ const App = () => {
             <Route path="/community-partner-list" element={<CommunityPartnerList />} />
             <Route path="/food-requests/:communityPartnerId" element={<FoodRequestCommunityPartner />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="*" element={<div>404 Not Found</div>} />
+            <Route path="/signin" element={<SignIn onUserUpdate={handleUserUpdate} />} />
+            <Route path="/signout" element={<SignOut onUserUpdate={handleUserUpdate} />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
       </div>

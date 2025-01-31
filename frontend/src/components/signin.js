@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const SignIn = () => {
+const SignIn = ({ onUserUpdate }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [type, setType] = useState('donor');
@@ -19,28 +19,24 @@ const SignIn = () => {
         type
       });
       setError('');
-      console.log('Response data:', response.data);
+      console.log(response.data);
 
-      // Check if response data contains the expected fields
-      if (response.data && response.data.data) {
-        const userData = {
-          id: type === 'donor' ? response.data.data.donor_id : response.data.data.community_partner_id,
-          email: response.data.data.contact_email,
-          type: type
-        };
-        console.log('User data:', userData);
+      // Set cookie with session data
+      const userData = {
+        id: type === 'donor' ? response.data.data.donor_id : response.data.data.community_partner_id,
+        email: response.data.data.contact_email,
+        type: type
+      };
+      Cookies.set('user', JSON.stringify(userData), { expires: 1 }); // Cookie expires in 1 day
 
-        // Set cookie with session data
-        Cookies.set('user', JSON.stringify(userData), { expires: 1 }); // Cookie expires in 1 day
+      // Update user data in the parent component
+      onUserUpdate(userData);
 
-        // Navigate to the appropriate home page based on user type
-        if (type === 'donor') {
-          navigate('/donor-home');
-        } else if (type === 'community-partner') {
-          navigate('/community-partner-home');
-        }
-      } else {
-        setError('Invalid response data');
+      // Navigate to the appropriate home page based on user type
+      if (type === 'donor') {
+        navigate('/donor-home');
+      } else if (type === 'community-partner') {
+        navigate('/community-partner-home');
       }
     } catch (err) {
       setError(err.response ? err.response.data.message : 'Error signing in');

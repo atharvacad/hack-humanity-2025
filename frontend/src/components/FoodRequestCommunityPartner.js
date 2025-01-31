@@ -10,6 +10,7 @@ const api = axios.create({
 const FoodRequestCommunityPartner = () => {
   const [foodRequests, setFoodRequests] = useState([]);
   const [error, setError] = useState('');
+  const [expandedRows, setExpandedRows] = useState({});
 
   useEffect(() => {
     const fetchFoodRequests = async () => {
@@ -20,7 +21,7 @@ const FoodRequestCommunityPartner = () => {
       }
 
       const userData = JSON.parse(userCookie);
-      const { id, email, type } = userData;
+      const { id, type } = userData;
 
       if (type !== 'community-partner') {
         setError('User is not a community partner');
@@ -39,6 +40,13 @@ const FoodRequestCommunityPartner = () => {
     fetchFoodRequests();
   }, []);
 
+  const toggleRow = (food_request_id) => {
+    setExpandedRows((prev) => ({
+      ...prev,
+      [food_request_id]: !prev[food_request_id]
+    }));
+  };
+
   return (
     <div className="container mt-5">
       <h2 className="mb-4">Food Requests for Community Partner</h2>
@@ -52,18 +60,41 @@ const FoodRequestCommunityPartner = () => {
             <th>Request Date</th>
             <th>Total Quantity</th>
             <th>Available Quantity</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {foodRequests.map((request) => (
-            <tr key={request.food_request_id}>
-              <td>{request.food_name}</td>
-              <td>{request.quantity_requested}</td>
-              <td>{request.pickupdate}</td>
-              <td>{request.request_date}</td>
-              <td>{request.total_quantity}</td>
-              <td>{request.available_quantity}</td>
-            </tr>
+            <React.Fragment key={request.food_request_id}>
+              <tr>
+                <td>{request.food_name}</td>
+                <td>{request.quantity_requested}</td>
+                <td>{request.pickupdate}</td>
+                <td>{request.request_date}</td>
+                <td>{request.total_quantity}</td>
+                <td>{request.available_quantity}</td>
+                <td>
+                  <button
+                    className="btn btn-info mb-2"
+                    onClick={() => toggleRow(request.food_request_id)}
+                  >
+                    {expandedRows[request.food_request_id] ? 'Hide Donor Info' : 'Show Donor Info'}
+                  </button>
+                </td>
+              </tr>
+              {expandedRows[request.food_request_id] && (
+                <tr>
+                  <td colSpan="7">
+                    <div>
+                      <p><strong>Donor Name:</strong> {request.donor_name}</p>
+                      <p><strong>Donor Email:</strong> {request.donor_email}</p>
+                      <p><strong>Donor Phone:</strong> {request.donor_phone}</p>
+                      <p><strong>Donor Address:</strong> {request.donor_address}</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </React.Fragment>
           ))}
         </tbody>
       </table>
