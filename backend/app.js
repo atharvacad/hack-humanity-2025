@@ -20,8 +20,10 @@ const foodRequestsRoutes = require('./routes/foodRequests');
 // Login route
 app.post('/login', (req, res) => {
   const { email, password, type } = req.body;
+  console.log(`Login attempt with email: ${email}, type: ${type}`);
 
   if (password !== '1234') {
+    console.log('Invalid password');
     return res.status(401).json({ message: 'Invalid password' });
   }
 
@@ -31,17 +33,21 @@ app.post('/login', (req, res) => {
   } else if (type === 'community-partner') {
     table = 'community_partner';
   } else {
+    console.log('Invalid type');
     return res.status(400).json({ message: 'Invalid type' });
   }
 
   const sql = `SELECT * FROM ${table} WHERE contact_email = ?`;
   db.get(sql, [email], (err, row) => {
     if (err) {
+      console.log(`Database error: ${err.message}`);
       return res.status(400).json({ error: err.message });
     }
     if (!row) {
+      console.log('User not found');
       return res.status(404).json({ message: 'User not found' });
     }
+    console.log('Login successful');
     res.json({
       message: 'success',
       data: row

@@ -2,15 +2,19 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db'); // Assuming you have a db.js file to handle the database connection
 
+// Add a new food request
 router.post('/food-requests', (req, res) => {
   const { foods_id, community_partner_id, quantity_requested } = req.body;
+  console.log('Received request to add a new food request:', req.body);
 
   // Check if the requested quantity is available
   db.get('SELECT quantity, available_to FROM foods WHERE foods_id = ?', [foods_id], (err, row) => {
     if (err) {
+      console.error(`Error fetching food quantity: ${err.message}`);
       return res.status(400).json({ error: err.message });
     }
     if (!row || row.quantity < quantity_requested) {
+      console.log('Requested quantity not available');
       return res.status(400).json({ message: 'Requested quantity not available' });
     }
 
@@ -21,6 +25,7 @@ router.post('/food-requests', (req, res) => {
 
     db.run(sql, params, function(err) {
       if (err) {
+        console.error(`Error adding food request: ${err.message}`);
         return res.status(400).json({ error: err.message });
       }
 
@@ -28,8 +33,10 @@ router.post('/food-requests', (req, res) => {
       const newQuantity = row.quantity - quantity_requested;
       db.run('UPDATE foods SET quantity = ? WHERE foods_id = ?', [newQuantity, foods_id], function(err) {
         if (err) {
+          console.error(`Error updating food quantity: ${err.message}`);
           return res.status(400).json({ error: err.message });
         }
+        console.log('Food request added with ID:', this.lastID);
         res.json({
           message: 'success',
           data: req.body,
@@ -43,6 +50,7 @@ router.post('/food-requests', (req, res) => {
 // Get all food requests for a community partner - Community Partner
 router.get('/get-food-requests/:community_partner_id', (req, res) => {
   const { community_partner_id } = req.params;
+  console.log(`Received request to get food requests for community partner with ID: ${community_partner_id}`);
   const sql = `
     SELECT fr.*, f.food_name, f.quantity AS total_quantity, (f.quantity - fr.quantity_requested) AS available_quantity
     FROM food_requests fr
@@ -51,8 +59,10 @@ router.get('/get-food-requests/:community_partner_id', (req, res) => {
   `;
   db.all(sql, [community_partner_id], (err, rows) => {
     if (err) {
+      console.error(`Error fetching food requests: ${err.message}`);
       return res.status(400).json({ error: err.message });
     }
+    console.log('Food requests found for community partner:', rows);
     res.json({
       message: 'success',
       data: rows
@@ -63,6 +73,7 @@ router.get('/get-food-requests/:community_partner_id', (req, res) => {
 // Get all food requests for a donation - this is for the donors
 router.get('/get-donor-requests/:donor_id', (req, res) => {
   const { donor_id } = req.params;
+  console.log(`Received request to get food requests for donor with ID: ${donor_id}`);
   const sql = `
     SELECT fr.*, cp.name AS community_partner_name, f.food_name, f.quantity AS total_quantity
     FROM food_requests fr
@@ -72,8 +83,10 @@ router.get('/get-donor-requests/:donor_id', (req, res) => {
   `;
   db.all(sql, [donor_id], (err, rows) => {
     if (err) {
+      console.error(`Error fetching donor food requests: ${err.message}`);
       return res.status(400).json({ error: err.message });
     }
+    console.log('Food requests found for donor:', rows);
     res.json({
       message: 'success',
       data: rows

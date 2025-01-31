@@ -1,19 +1,34 @@
-// src/components/FoodRequests.js
+// src/components/FoodRequestCommunityPartner.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const api = axios.create({
   baseURL: 'http://localhost:3001/api'
 });
 
-const FoodRequestCommunityPartner = ({ communityPartnerId }) => {
+const FoodRequestCommunityPartner = () => {
   const [foodRequests, setFoodRequests] = useState([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchFoodRequests = async () => {
+      const userCookie = Cookies.get('user');
+      if (!userCookie) {
+        setError('User data not found in cookies');
+        return;
+      }
+
+      const userData = JSON.parse(userCookie);
+      const { id, email, type } = userData;
+
+      if (type !== 'community-partner') {
+        setError('User is not a community partner');
+        return;
+      }
+
       try {
-        const response = await api.get(`/food-requests/get-food-requests/${communityPartnerId}`);
+        const response = await api.get(`/food-requests/get-food-requests/${id}`);
         setFoodRequests(response.data.data);
         setError('');
       } catch (err) {
@@ -22,11 +37,11 @@ const FoodRequestCommunityPartner = ({ communityPartnerId }) => {
     };
 
     fetchFoodRequests();
-  }, [communityPartnerId]);
+  }, []);
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4">Food Requests for Community Partner {communityPartnerId}</h2>
+      <h2 className="mb-4">Food Requests for Community Partner</h2>
       {error && <p className="text-danger">{error}</p>}
       <table className="table table-striped table-bordered">
         <thead className="thead-dark">
