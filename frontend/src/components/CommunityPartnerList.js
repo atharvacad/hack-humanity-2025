@@ -1,32 +1,51 @@
 // src/components/CommunityPartnerList.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 const api = axios.create({
   baseURL: 'http://localhost:3001/api'
 });
 
 const CommunityPartnerList = () => {
-  const [communityPartnerList, setCommunityPartnerList] = useState([]);
+  const [communityPartners, setCommunityPartners] = useState([]);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCommunityPartnerList = async () => {
+    const fetchCommunityPartners = async () => {
+      const userCookie = Cookies.get('user');
+      if (!userCookie) {
+        setError('User data not found in cookies');
+        navigate('/404');
+        return;
+      }
+
+      const userData = JSON.parse(userCookie);
+      const { type } = userData;
+
+      if (type !== 'donor') {
+        setError('User is not a donor');
+        navigate('/404');
+        return;
+      }
+
       try {
         const response = await api.get('/community-partners/get-community-partners-list');
-        setCommunityPartnerList(response.data.data);
+        setCommunityPartners(response.data.data);
         setError('');
       } catch (err) {
         setError(err.response ? err.response.data.error : 'Error fetching data');
       }
     };
 
-    fetchCommunityPartnerList();
-  }, []);
+    fetchCommunityPartners();
+  }, [navigate]);
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4">Community Partner List</h2>
+      <h2 className="mb-4">Community Partners List</h2>
       {error && <p className="text-danger">{error}</p>}
       <table className="table table-striped table-bordered">
         <thead className="thead-dark">
@@ -41,7 +60,7 @@ const CommunityPartnerList = () => {
           </tr>
         </thead>
         <tbody>
-          {communityPartnerList.map((partner) => (
+          {communityPartners.map((partner) => (
             <tr key={partner.community_partner_id}>
               <td>{partner.name}</td>
               <td>{partner.contact_name}</td>

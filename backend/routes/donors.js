@@ -80,4 +80,31 @@ router.get('/get-food-list-donar', (req, res) => {
   });
 });
 
+
+// Get a donor by ID and email
+router.post('/get-donor-by-id-and-email', (req, res) => {
+  const { id, email } = req.body;
+  console.log(`Received request to get donor with ID: ${id} and Email: ${email}`);
+  const sql = 'SELECT * FROM donors WHERE donor_id = ? AND contact_email = ?';
+  const params = [id, email];
+
+  db.get(sql, params, (err, row) => {
+    if (err) {
+      console.error(`Error fetching donor: ${err.message}`);
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    if (!row) {
+      console.log('Donor not found');
+      res.status(404).json({ message: 'Donor not found' });
+      return;
+    }
+    console.log('Donor found:', row);
+    res.json({
+      message: 'success',
+      data: row
+    });
+  });
+});
+
 module.exports = router;

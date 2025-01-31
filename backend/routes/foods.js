@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../db'); // Assuming you have a db.js file to handle the database connection
 
 // Add a new food
-router.post('/add-food', (req, res) => {
+router.post('/add-food-donations', (req, res) => {
   const { donor_id, food_name, food_type, description, quantity, unit, packaging_type, storage_instructions, expiry_date, prepared_date, available_from, available_to, pickup_location, brand, dietary_restrictions, special_notes } = req.body;
   console.log('Received request to add a new food:', req.body);
   const sql = `INSERT INTO foods (donor_id, food_name, food_type, description, quantity, unit, packaging_type, storage_instructions, expiry_date, prepared_date, available_from, available_to, pickup_location, brand, dietary_restrictions, special_notes)

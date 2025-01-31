@@ -13,6 +13,8 @@ import SignIn from './signin';
 import SignUp from './signup';
 import SignOut from './SignOut';
 import NotFound from './NotFound';
+import RequestedFood from './RequestedFood';
+import AddFoodDonation from './AddFoodDonation';
 import Cookies from 'js-cookie';
 
 const App = () => {
@@ -45,6 +47,15 @@ const App = () => {
                   </li>
                   <li className="nav-item">
                     <Link className="nav-link" to="/foodlistdonar">Food List Donar</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/requested-food">Requested Food</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/add-food-donation">Add Food Donation</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/community-partner-list">Community Partner List</Link>
                   </li>
                 </>
               )}
@@ -91,6 +102,8 @@ const App = () => {
             <Route path="/donor-list" element={<DonorList />} />
             <Route path="/community-partner-list" element={<CommunityPartnerList />} />
             <Route path="/food-requests/:communityPartnerId" element={<FoodRequestCommunityPartner />} />
+            <Route path="/requested-food" element={<RequestedFood />} />
+            <Route path="/add-food-donation" element={<AddFoodDonation />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/signin" element={<SignIn onUserUpdate={handleUserUpdate} />} />
             <Route path="/signout" element={<SignOut onUserUpdate={handleUserUpdate} />} />

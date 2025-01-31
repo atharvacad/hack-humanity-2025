@@ -26,11 +26,16 @@ const DonorHome = () => {
 
     const fetchDonorData = async () => {
       try {
-        const response = await axios.post('http://localhost:3001/api/community-partners/get-community-partner-by-id-and-email', {
+        const response = await axios.post('http://localhost:3001/api/donors/get-donor-by-id-and-email', {
           id,
           email
         });
-        setDonorData(response.data);
+        console.log('Response data:', response.data);
+        if (response.data && response.data.data) {
+          setDonorData(response.data.data);
+        } else {
+          setError('Invalid response data');
+        }
       } catch (err) {
         setError(err.response ? err.response.data.message : 'Error fetching donor data');
       }
