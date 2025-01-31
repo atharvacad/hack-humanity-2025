@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import './App.css';
-import Home from './Home'; // Import the Home component
+import Home from './Home';
 import FoodListDonar from './FoodListDonar';
 import ViewFoodList from './ViewFoodList';
 import DonorList from './DonorList';
@@ -16,6 +16,7 @@ import SignOut from './SignOut';
 import NotFound from './NotFound';
 import RequestedFood from './RequestedFood';
 import AddFoodDonation from './AddFoodDonation';
+import AboutUs from './AboutUs'; // Import the AboutUs component
 import Cookies from 'js-cookie';
 
 const App = () => {
@@ -41,6 +42,9 @@ const App = () => {
           <Link className="navbar-brand" to="/">AgniSewa App</Link>
           <div className="collapse navbar-collapse">
             <ul className="navbar-nav mr-auto">
+              <li className="nav-item">
+                <Link className="nav-link" to="/">Home</Link>
+              </li>
               {userType === 'donor' && (
                 <>
                   <li className="nav-item">
@@ -91,12 +95,15 @@ const App = () => {
                   <Link className="nav-link" to="/signout">Sign Out</Link>
                 </li>
               )}
+              <li className="nav-item">
+                <Link className="nav-link" to="/about-us">About Us</Link>
+              </li>
             </ul>
           </div>
         </nav>
         <div className="container mt-4">
           <Routes>
-            <Route path="/" element={<Home />} /> {/* Add the Home route */}
+            <Route path="/" element={<Home />} />
             <Route path="/donor-home" element={<DonorHome />} />
             <Route path="/community-partner-home" element={<CommunityPartnerHome />} />
             <Route path="/foodlistdonar" element={<FoodListDonar />} />
@@ -109,6 +116,7 @@ const App = () => {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/signin" element={<SignIn onUserUpdate={handleUserUpdate} />} />
             <Route path="/signout" element={<SignOut onUserUpdate={handleUserUpdate} />} />
+            <Route path="/about-us" element={<AboutUs />} /> {/* Add the About Us route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>

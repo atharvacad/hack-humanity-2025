@@ -57,7 +57,7 @@ db.serialize(() => {
     FOREIGN KEY(foods_id) REFERENCES foods(foods_id),
     FOREIGN KEY(community_partner_id) REFERENCES community_partner(community_partner_id)
   )`);
-const sql = fs.readFileSync('insert.sql', 'utf8');
+const sql = fs.readFileSync('scripts/insert.sql', 'utf8');
 db.exec(sql, (err) => {
         if (err) {
                 console.error('Error executing SQL file:', err.message);
@@ -66,7 +66,7 @@ db.exec(sql, (err) => {
         }
 });
 
-const sql2 = fs.readFileSync('insert2.sql', 'utf8');
+const sql2 = fs.readFileSync('scripts/insert2.sql', 'utf8');
 db.exec(sql2, (err) => {
         if (err) {
                 console.error('Error executing SQL file:', err.message);
