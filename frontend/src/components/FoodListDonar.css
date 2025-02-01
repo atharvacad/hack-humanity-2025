@@ -1,0 +1,33 @@
+/* src/components/FoodListDonar.css */
+.container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .table {
+    margin-top: 20px;
+  }
+  
+  .table th, .table td {
+    vertical-align: middle;
+  }
+  
+  .badge-primary {
+    background-color: #007bff;
+  }
+  
+  .lead {
+    font-size: 1.25rem;
+    font-weight: 300;
+  }
+  
+  .details {
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .mt-4 {
+    margin-top: 1.5rem;
+  }

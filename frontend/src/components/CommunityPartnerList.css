@@ -1,0 +1,23 @@
+/* src/components/CommunityPartnerList.css */
+.container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .table {
+    margin-top: 20px;
+  }
+  
+  .table th, .table td {
+    vertical-align: middle;
+  }
+  
+  .lead {
+    font-size: 1.25rem;
+    font-weight: 300;
+  }
+  
+  .mt-4 {
+    margin-top: 1.5rem;
+  }
